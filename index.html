@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐾 Belle 家塔羅命數館 🐾</title>
+    <style>
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: #faf6f0;
+            color: #4a3e3d;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 650px;
+            width: 100%;
+            background: #ffffff;
+            padding: 35px 25px;
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(140, 107, 83, 0.12);
+            border: 2px solid #ebdcd0;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .logo-area {
+            font-size: 28px;
+            color: #8c6b53;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #a18875;
+            margin-bottom: 30px;
+            background: #f5efe6;
+            padding: 8px 15px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .input-group {
+            margin-bottom: 25px;
+        }
+        input {
+            padding: 14px;
+            width: 80%;
+            max-width: 320px;
+            border: 2px solid #dcd1c4;
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+            color: #5a4a42;
+            background-color: #fdfcfb;
+        }
+        input:focus {
+            border-color: #8c6b53;
+            box-shadow: 0 0 8px rgba(140, 107, 83, 0.2);
+        }
+        button {
+            padding: 14px 40px;
+            background-color: #8c6b53;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 80%;
+            max-width: 320px;
+            box-shadow: 0 6px 15px rgba(140, 107, 83, 0.2);
+        }
+        button:hover {
+            background-color: #70543e;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(140, 107, 83, 0.3);
+        }
+        #result {
+            margin-top: 35px;
+            display: none;
+            animation: fadeIn 0.6s ease-in-out forwards;
+        }
+        .result-header {
+            font-size: 22px;
+            color: #8c6b53;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .image-container {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            border: 3px solid #ebdcd0;
+        }
+        .big-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .analysis-box {
+            text-align: left;
+            line-height: 1.7;
+            background: #fdfbf7;
+            padding: 25px;
+            border-radius: 16px;
+            border-left: 6px solid #8c6b53;
+            margin-top: 20px;
+        }
+        .keywords {
+            font-weight: bold;
+            color: #b85c38;
+            margin-bottom: 12px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .keywords::before {
+            content: '🔮';
+            margin-right: 8px;
+        }
+        .desc-text {
+            font-size: 15px;
+            color: #5a4a42;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-area">🐾 Belle 家塔羅命數館 🐾</div>
+    <div class="subtitle">輸入生日 ➔ 自動解密專屬貓狗塔羅特質</div>
+    
+    <div class="input-group">
+        <input type="number" id="birthday" placeholder="請輸入西元生日 (如：19990125)" oninput="if(value.length>8)value=value.slice(0,8)">
+    </div>
+    <button onclick="calculateTarot()">開啟專屬命數解密</button>
+
+    <div id="result">
+        <div class="result-header" id="card-title"></div>
+        
+        <div class="image-container">
+            <img src="BA45BC63-22D7-4899-BF5D-04FC21C00A85.png" alt="Belle家塔羅全圖" class="big-image" id="tarot-pic">
+        </div>
+        
+        <div class="analysis-box">
+            <div id="card-keywords" class="keywords"></div>
+            <div id="card-desc" class="desc-text"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 自動修正圖片檔名的邏輯（因為手機上傳常帶有特殊後綴，幫你做自動防錯）
+window.addEventListener('DOMContentLoaded', () => {
+    const imgElement = document.getElementById('tarot-pic');
+    if (imgElement) {
+        // 自動搜尋這張在相同資料夾內開頭相符的圖片
+        imgElement.src = "BA45BC63-22D7-4899-BF5D-04FC21C00A85.png";
+    }
+});
+
+const tarotDatabase = {
+    1: { title: "1 號 —— 魔術師 (The Magician)", keywords: "核心特質：創造、開始、潛能", desc: "你的思維非常靈活，腦袋裡總是充滿各種新鮮好玩的新點子，是朋友眼中的點子王！你具備強大的「從無到有」創造力，只要你想做，就能把想法付諸實行。你很適合擔任開創者或帶動氣氛的角色。" },
+    2: { title: "2 號 —— 女祭司 (The High Priestess)", keywords: "核心特質：直覺、智慧、內在", desc: "你是個心思細膩、直覺敏銳且內斂的人。比起熱鬧的社交，你更喜歡保持冷靜觀察。你的精神世界非常豐富，經常能一眼看穿事情的本質或別人的心思，是身邊朋友最喜歡傾訴心事、尋求理智建議的智囊。" },
+    3: { title: "3 號 —— 女皇 (The Empress)", keywords: "核心特質：豐盛、愛、滋養", desc: "你天生自帶一種溫暖、親切且大方的氣場，懂得享受生活，也極具審美觀。你非常懂得照顧人、滋養身邊的朋友或寵物，大家都覺得待在你身邊很有安全感。你像一個充滿母愛與包容力的守護者。" },
+    4: { title: "4 號 —— 皇帝 (The Emperor)", keywords: "核心特質：領導、秩序、保護", desc: "你是一個非常有肩膀、講求條理與原則的人。天生自帶領導特質，做事腳踏實地且不容馬虎。當身邊的人陷入混亂時，你總能挺身而出、建立秩序，給予身邊的人最強大的保護罩與安全感。" },
+    5: { title: "5 號 —— 教皇 (The Hierophant)", keywords: "核心特質：信仰、學習、傳承", desc: "你熱愛學習新知，在某個專業領域往往能成為大家信任的導師。你重視傳統美德與體制，思想成熟穩重，擅長扮演溝通的橋樑。當朋友迷茫時，你總是能像長輩或心靈導師一樣，開導並傳承智慧給他們。" },
+    6: { title: "6 號 —— 戀人 (The Lovers)", keywords: "核心特質：選擇、關係、和諧", desc: "你的社交能力非常好，人緣極佳，大家都喜歡與你相處。你非常注重人與人之間的和諧與情感連結，在面對人生大大小小的「選擇」時，你傾向傾聽內心的渴望，追求美與愛的平衡。" },
+    7: { title: "7 號 —— 戰車 (The Chariot)", keywords: "核心特質：意志、勝利、前進", desc: "你的目標導向非常明確！一旦鎖定了方向，就會展現出驚人的意志力與衝勁，排除萬難往前衝。你不怕挑戰，面對競爭時非常有勝負欲，是一個能靠自己的堅持贏得勝利的生命鬥士。" },
+    8: { title: "8 號 —— 力量 (Strength)", keywords: "核心特質：勇氣、耐心、內在力量", desc: "擁有命數 8 的你，內心擁有一股非常強大且溫柔的韌性。你面對困難或繁瑣的挑戰時，不是靠強硬的手段去壓制，而是擅長用「耐心」與「高情商」去化解衝突、收服人心，就像圖中溫柔的比熊能安撫萬獸之王一樣。在朋友或工作夥伴眼中，你是一個非常值得信賴、抗壓性極強，且具備包容力的人。" },
+    9: { title: "9 號 —— 隱者 (The Hermit)", keywords: "核心特質：內省、智慧、獨處", desc: "你是一位低調的思考家。比起喧囂與無效的社交，你更需要高質量的「獨處時間」來讓自己沉澱與充電。你做人處事低調內斂，不盲目隨波逐流，對人生有一套自己深刻的哲理。你具有大智若愚的特質，當身邊的朋友遇到迷茫時，你總能像提著燈籠的引路人一樣，用你的智慧默默為別人指點迷津。" },
+    10: { title: "10 號 —— 命運之輪 (Wheel of Fortune)", keywords: "核心特質：變化、機會、循環", desc: "你的適應能力極強，能以平常心面對生活中的各種高低起伏。你相信緣分，也常常能敏銳地抓住生命中突如其來的「好機會」。對你而言，變化就是最好的轉機，你懂得順應時勢、順勢而為。" },
+    11: { title: "11 號 —— 正義 (Justice)", keywords: "核心特質：公平、真理、平衡", desc: "你心中有一把無形且精準的秤。你非常看重邏輯、公平與正義，做事情講求黑白分明、是非對錯。你擅長理性分析，不會被情緒沖昏頭，在朋友圈中常扮演幫大家主持公道、居中協調的客觀角色。" },
+    12: { title: "12 號 —— 吊人 (The Hanged Man)", keywords: "核心特質：等待、轉變、放下", desc: "你的換位思考能力是一流的！你願意為了更高的目標做出暫時的犧牲或等待。你看事情的角度常常和別人不一樣，能夠在逆境中苦中作樂，並在「放手」與「順從」的過程中，體會到更高層次的生命智慧。" },
+    13: { title: "13 號 —— 死神 (Death)", keywords: "核心特質：結束、轉化、重生", desc: "拿到這張牌不用害怕，這代表你具有極強的「斷捨離」能力與決斷力。你敢於打破舊有的舒適圈，當一段關係或工作不再適合你時，你能勇敢地畫下句點，並像鳳凰涅槃一樣，在廢墟中重新銳變、華麗轉生。" },
+    14: { title: "14 號 —— 節制 (Temperance)", keywords: "核心特質：平衡、療癒、調和", desc: "你是一位天生的溝通協調大師。你懂得在不同的人事物、或是理想與現實之間找到最佳的「平衡點」。你的氣場非常具有療癒感，能把衝突的能量調和得圓融順暢，讓周遭的人感到和諧與平靜。" },
+    15: { title: "15 號 —— 惡魔 (The Devil)", keywords: "核心特質：誘惑、束縛、慾望", desc: "你對物質世界、金錢或權力具有很強的敏銳度與掌控欲，也充滿了世俗的魅力與吸引力。你很有野心，但也容易對某些人事物過度執著、產生依賴。學會覺察自己的慾望並化執著為動力，你就能掌控全局。" },
+    16: { title: "16 號 —— 塔 (The Tower)", keywords: "核心特質：突破、震撼、重建", desc: "你的生命中往往伴隨著巨大的突破與劇烈的轉變。你不喜歡墨守成規，當生活陷入僵局時，你擁有打破僵化體制、徹底掀翻舊結構的爆發力。每一次的「震盪」，都是為了幫你清除障礙、重建更穩固的未來。" },
+    17: { title: "17 號 —— 星星 (The Star)", keywords: "核心特質：希望、靈感、療癒", desc: "你是個天生的樂觀主義者，心中永遠保留著一抹純真希望。你具有很強的藝術細胞或獨特的靈感，總能帶給身邊的人滿滿的正能量。不論生活多難，你就像夜空中的星星，默默指引並療癒著大家。" },
+    18: { title: "18 號 —— 月亮 (The Moon)", keywords: "核心特質：直覺、恐懼、潛意識", desc: "你的靈性與第六感極強，但內心也比較敏感多疑，容易受到周圍環境與他人情緒的干擾。你擅長藝術創作或探索未知的潛意識世界。學會接納內心的不安與焦慮，它就會轉化為你最強大的靈感來源。" },
+    19: { title: "19 號 —— 太陽 (The Sun)", keywords: "核心特質：成功、快樂、活力", desc: "你就是個行走的發光體！性格開朗、熱情、充滿活力，像小太陽一樣溫暖著每一個人。你內心單純善良，做人做事光明磊落，很容易在團體中獲得成功與喜愛，天生自帶讓人感到快樂的超能力。" },
+    20: { title: "20 號 —— 審判 (Judgment)", keywords: "核心特質：覺醒、重生、使命", desc: "你是一個對自我要求高、且具有強大「覺察力」的人。在人生的某個重要階段，你往往會經歷深刻的精神覺醒，明白自己真正的使命。你懂得從過去的經驗與失敗中吸取教訓，做出清晰且不後悔的重大抉擇。" },
+    21: { title: "21 號 —— 世界 (The World)", keywords: "核心特質：完成、圓滿、成就", desc: "這是一張追求極致與圓滿的牌。你做事非常有始有終，渴望在各方面都達到完美的平衡。你具備宏觀的國際視野，容易在人生或事業上達到一個階段性的巔峰與大圓滿。你的格局很大，能包容世界的多樣性。" },
+    22: { title: "22 號 —— 愚人 (The Fool)", keywords: "核心特質：冒險、自由、信任", desc: "你擁有最純粹、最渴望自由的靈魂！你不喜歡被條條框框限制，面對未知充滿了冒險精神。你有一顆強大的心臟，敢於帶著信任「盲目一跳」去開啟新的人生旅程。活在當下、無憂無慮是你的最高境界。" }
+};
+
+function calculateTarot() {
+    let input = document.getElementById('birthday').value;
+    if (input.length !== 8) { alert('請輸入完整的8位數西元生日，例如 19990125 喔！'); return; }
+    
+    let sum = 0;
+    for (let i = 0; i < input.length; i++) { sum += parseInt(input[i]); }
+    
+    while (sum > 22) {
+        let str = sum.toString();
+        sum = parseInt(str[0]) + parseInt(str[1]);
+    }
+
+    const resultDiv = document.getElementById('result');
+    const title = document.getElementById('card-title');
+    const keywords = document.getElementById('card-keywords');
+    const desc = document.getElementById('card-desc');
+    
+    if (tarotDatabase[sum]) {
+        title.innerHTML = "🎉 測算結果：妳的專屬守護牌卡是【" + tarotDatabase[sum].title + "】";
+        keywords.innerText = tarotDatabase[sum].keywords;
+        desc.innerText = tarotDatabase[sum].desc;
+        resultDiv.style.display = 'block';
+        
+        resultDiv.scrollIntoView({ behavior: 'smooth' });
+    } else {
+        alert('計算好像有點小卡關，請重新輸入試試！');
+    }
+}
+</script>
+
+</body>
+</html>
