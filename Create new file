@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belle AI 命理館 - 宿曜星宿多人群組解碼矩陣</title>
+    <style>
+        :root {
+            --bg-color: #0d0e15;
+            --card-bg: #161824;
+            --primary: #8a2be2;
+            --primary-glow: rgba(138, 43, 226, 0.4);
+            --accent: #00f0ff;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #2d3142;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #fff;
+            text-shadow: 0 0 10px var(--primary-glow);
+            margin-bottom: 5px;
+            font-size: 2rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: #08090d;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), #4b0082);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.6);
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .flex-row .form-group {
+            flex: 1;
+        }
+
+        /* 角色清單樣式 */
+        .roster {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .roster-item {
+            background: #1e2235;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .roster-item .remove-btn {
+            color: #ff4a4a;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            background: none;
+        }
+
+        /* 比對面板 */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* 報告解碼樣式 */
+        #report-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-box {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px dashed var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .relation-title {
+            font-size: 1.8rem;
+            color: #fff;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: 800;
+        }
+
+        .relation-desc {
+            line-height: 1.6;
+            color: var(--text-main);
+            white-space: pre-line;
+        }
+
+        .mansion-tag {
+            display: inline-block;
+            background: var(--accent);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 600px) {
+            .flex-row, .comparison-grid {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Belle AI 命理館</h1>
+            <p>🌌 宿曜星宿・多人群組關係解碼矩陣 🌌</p>
+        </header>
+
+        <!-- 1. 角色登錄卡片 -->
+        <div class="card">
+            <h2>👤 第一步：建立你的角色地圖 (NPC名單)</h2>
+            <div class="flex-row">
+                <div class="form-group">
+                    <label for="char-name">姓名/稱呼</label>
+                    <input type="text" id="char-name" placeholder="例如：我、阿明、主管、貓咪">
+                </div>
+                <div class="form-group">
+                    <label for="char-birth">出生年月日</label>
+                    <input type="date" id="char-birth" value="1995-01-01">
+                </div>
+            </div>
+            <button class="btn" id="add-char-btn">➕ 登錄到名單中</button>
+            
+            <div class="roster" id="roster-container">
+                <!-- 動態注入已登錄角色 -->
+            </div>
+        </div>
+
+        <!-- 2. 關係矩陣比對卡片 -->
+        <div class="card" id="compare-card" style="display:none;">
+            <h2>⚡ 第二步：連線交叉解碼</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top:0;">在名單裡選擇兩個人，系統將逆向工程他們的磁場干涉模式：</p>
+            <div class="comparison-grid">
+                <div class="form-group">
+                    <label for="compare-a">角色 A</label>
+                    <select id="compare-a"></select>
+                </div>
+                <div class="form-group">
+                    <label for="compare-b">角色 B</label>
+                    <select id="compare-b"></select>
+                </div>
+            </div>
+            <button class="btn" id="decode-btn" style="background: linear-gradient(135deg, var(--accent), #008080); box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3); color: #000;">📡 啟動磁場解碼</button>
+        </div>
+
+        <!-- 3. 輸出詳細報告 -->
+        <div class="card" id="report-section">
+            <h2>📜 宇宙主機・解碼報告</h2>
+            <div id="mansion-info" style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.95rem;">
+                <!-- 動態星宿屬性 -->
+            </div>
+            <div class="result-box">
+                <div class="relation-title" id="relation-result">-- 關係 --</div>
+                <div class="relation-desc" id="relation-detail">請點擊解碼按鈕讀取數據...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 宿曜經核心數據矩陣與算法 ---
+        // 農曆簡化換算(因無後台API，使用精簡陽曆轉宿算法，誤差控制在合理範圍)
+        const mansions = [
+            "角", "亢", "氐", "房", "心", "尾", "箕", 
+            "斗", "女", "虛", "危", "室", "壁", "奎", 
+            "婁", "胃", "昂", "畢", "觜", "參", "井", 
+            "鬼", "柳", "星", "張", "翼", "軫"
+        ];
+
+        // 27宿關係對照表 (步長距離對照)
+        const relationMap = {
+            0: { name: "命之星", desc: "【鏡子裡的自己】\n\n你們在 27 星宿環上完美重合。這不是吸引力，而是複製人的存在。對方身上所有你喜歡或討厭的怪癖，都會像照鏡子般放大呈現在你眼前。這是一段極度兩極化的靈魂代碼——要嘛成為穿同一條褲子的絕對知己，要嘛成為見面互翻白眼的宿敵。" },
+            
+            1: { name: "近距離 榮親", desc: "【貼身家人舒適圈】\n\n天然的家人默契，能量溫和。你們相處完全不需要防備與偽裝，即使不說話也毫不尷尬。吵架吵不散，是所有關係中安全感最強、最適合長久生活在一起的溫暖代碼。" },
+            8: { name: "中距離 榮親", desc: "【最推崇的黃金伴侶】\n\n距離剛好！既有家人的默契與支持，又完美保留了各自的獨立空間，不會因為過度貼近而踩線。最適合做生活中的神隊友、知心死黨。" },
+            15: { name: "遠距離 榮親", desc: "【平行線的默默守護】\n\n緣分雖然被距離稀釋，但波長極度溫和。平時各自安好，但一旦在低谷遇到、或在異鄉重逢，會瞬間激發出一種「自己人」的強烈革命情感。" },
+
+            2: { name: "近距離 友衰", desc: "【玩物喪志快樂黑洞】\n\n磁場極強！一碰面就只想一起吃喝玩樂、聊八卦，是標準的靈魂玩伴。然而，這也是個效率殺手，千萬不要一起談錢、創業或談正事，否則會陷入無形的精力消耗。" },
+            7: { name: "中距離 友衰", desc: "【最佳旅遊與社交搭檔】\n\n一起出國、培養共同愛好的最佳拍檔。你們有聊不完的話題，但因為生活保持適度距離，現實生活中的壞習慣比較不會直接拖累對方。" },
+            14: { name: "遠距離 友衰", desc: "【君子之交的輕鬆同好】\n\n關係比較淡，但相處起來完全沒有壓力。平時只是社群按讚、偶爾出來聚會的玩伴，是人際關係中極佳的解壓閥。" },
+
+            3: { name: "近距離 安壞", desc: "【驚心動魄的深水炸彈】\n\n宿曜經中引力最強烈、最相愛相殺的極端劇本！你們之間存在著天然的控制（安）與破壞（壞）。一碰面就會產生致命的吸引力，但也極度容易因小事而引爆貼身肉搏，體驗最虐心也最深刻。" },
+            6: { name: "中距離 安壞", desc: "【微妙抗衡的宿敵或摯愛】\n\n能量依然強大。「壞」會在暗中不斷挑戰「安」的防線與規矩，「安」則本能地想要掌控局面。許多分不開、卻天天吵架、糾纏一生的關係，都落在這個格子裡。" },
+            13: { name: "遠距離 安壞", desc: "【特定時刻觸發的業力引信】\n\n平時看起來相安無事，像普通朋友。但一旦面臨命運轉折或流年變動，這段代碼會突然被觸發，「壞」會突然成為「安」生命中的巨大考驗或打破既有規則的催化劑。" },
+
+            4: { name: "近距離 危成", desc: "【利益高度綁定的共同體】\n\n「成」自帶資源成就「危」，「危」則扮演消耗或收受的角色。在近距離中，你們的現實利益、功能性綁定得極深。一旦利益鏈斷裂或功能消失，關係會非常冷酷地重組或結束。" },
+            5: { name: "中距離 危成", desc: "【地表最強事業合夥人】\n\n做生意、搞專案的黃金組合！「成」能以適當的距離給予「危」極大的實質支援，雙方目標一致、各取所需，能創造極高的現實價值與財富成就。" },
+            12: { name: "遠距離 危成", desc: "【生命某個階段的短暫貴人】\n\n通常出現在特定環境下（如某個專案組、某堂課的同學）。他短暫地出現一下，幫你打怪升級或渡過某個難關，任務完成後便相忘於江湖。" },
+
+            9: { name: "業胎關係", desc: "【靈魂代碼複製貼上】\n\n你們在星盤上剛好處於等邊三角形的頂點。這不是重力吸引，而是宿命的共鳴！哪怕第一天認識，也會覺得對方身上有種謎一般的熟悉感。無需多言就能猜透對方心思。無論多久不聯絡，只要一對上線，代碼共振立刻 100% 復活。" },
+            18: { name: "業胎關係", desc: "【靈魂代碼複製貼上】\n\n你們在星盤上剛好處於等邊三角形的頂點。這不是重力吸引，而是宿命的共鳴！哪怕第一天認識，也會覺得對方身上有種謎一般的熟悉感。無需多言就能猜透對方心思。無論多久不聯絡，只要一對上線，代碼共振立刻 100% 復活。" }
+        };
+
+        // 簡單星宿推算演算法 (利用生日的基底進行27宿循環推估)
+        function getMansion(dateStr) {
+            const date = new Date(dateStr);
+            const baseDate = new Date("1900-01-01"); // 錨定基準點
+            const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
+            
+            // 27進位月球軌道計算
+            const index = Math.abs(diffDays) % 27;
+            return mansions[index];
+        }
+
+        // 計算兩個星宿之間的步長
+        function getDistance(m1, m2) {
+            const idx1 = mansions.indexOf(m1);
+            const idx2 = mansions.indexOf(m2);
+            let dist = (idx2 - idx1 + 27) % 27;
+            if (dist > 13) {
+                dist = 27 - dist; // 雙向對稱距離
+            }
+            return dist;
+        }
+
+        // --- UI 角色管理系統 ---
+        let characters = [];
+
+        const charNameInput = document.getElementById("char-name");
+        const charBirthInput = document.getElementById("char-birth");
+        const addCharBtn = document.getElementById("add-char-btn");
+        const rosterContainer = document.getElementById("roster-container");
+        
+        const compareCard = document.getElementById("compare-card");
+        const compareA = document.getElementById("compare-a");
+        const compareB = document.getElementById("compare-b");
+        const decodeBtn = document.getElementById("decode-btn");
+
+        const reportSection = document.getElementById("report-section");
+        const mansionInfo = document.getElementById("mansion-info");
+        const relationResult = document.getElementById("relation-result");
+        const relationDetail = document.getElementById("relation-detail");
+
+        // 1. 添加角色到清單
+        addCharBtn.addEventListener("click", () => {
+            const name = charNameInput.value.trim();
+            const birth = charBirthInput.value;
+
+            if (!name) {
+                alert("請輸入角色姓名/稱呼！");
+                return;
+            }
+
+            const mansion = getMansion(birth);
+            const newChar = { id: Date.now(), name, birth, mansion };
+            characters.push(newChar);
+
+            // 清空輸入
+            charNameInput.value = "";
+            
+            updateUI();
+        });
+
+        // 移除角色
+        window.removeChar = function(id) {
+            characters = characters.filter(c => c.id !== id);
+            updateUI();
+        };
+
+        // 更新 UI 列表與下拉選單
+        function updateUI() {
+            // 渲染角色 Roster
+            rosterContainer.innerHTML = "";
+            characters.forEach(c => {
+                const item = document.createElement("div");
+                item.className = "roster-item";
+                item.innerHTML = `
+                    <strong>${c.name}</strong> 
+                    <span class="mansion-tag">${c.mansion}宿</span>
+                    <button class="remove-btn" onclick="removeChar(${c.id})">×</button>
+                `;
+                rosterContainer.appendChild(item);
+            });
+
+            // 顯示或隱藏比對卡片
+            if (characters.length >= 2) {
+                compareCard.style.display = "block";
+                
+                // 更新下拉選單
+                const selectedA = compareA.value;
+                const selectedB = compareB.value;
+
+                compareA.innerHTML = "";
+                compareB.innerHTML = "";
+
+                characters.forEach(c => {
+                    const optA = document.createElement("option");
+                    optA.value = c.id;
+                    optA.textContent = `${c.name} (${c.mansion}宿)`;
+                    compareA.appendChild(optA);
+
+                    const optB = document.createElement("option");
+                    optB.value = c.id;
+                    optB.textContent = `${c.name} (${c.mansion}宿)`;
+                    compareB.appendChild(optB);
+                });
+
+                // 恢復先前的選擇 (如果有的話)
+                if (selectedA) compareA.value = selectedA;
+                if (selectedB) compareB.value = selectedB;
+            } else {
+                compareCard.style.display = "none";
+            }
+        }
+
+        // 2. 啟動解碼
+        decodeBtn.addEventListener("click", () => {
+            const idA = compareA.value;
+            const idB = compareB.value;
+
+            if (idA === idB) {
+                alert("解碼需要選擇兩個不同的人，自己不能跟自己干涉喔！");
+                return;
+            }
+
+            const charA = characters.find(c => c.id == idA);
+            const charB = characters.find(c => c.id == idB);
+
+            const dist = getDistance(charA.mansion, charB.mansion);
+
+            // 讀取對應關係解釋 (若無對應，預設顯示安壞/友衰等相鄰關係)
+            let result = relationMap[dist] || { name: "未知波動", desc: "你們的波動太過奇異，超出了本機的演算法範圍。或許你們註定要打破這場遊戲的常規！" };
+
+            // 渲染報告 UI
+            mansionInfo.innerHTML = `
+                <div>🔮 <strong>${charA.name}</strong> 載體：<span class="mansion-tag">${charA.mansion}宿</span></div>
+                <div>⚡ <strong>${charB.name}</strong> 載體：<span class="mansion-tag">${charB.mansion}宿</span></div>
+            `;
+
+            relationResult.textContent = `【 ${result.name} 】`;
+            
+            // 加入主導權、業力流向解析
+            let roleFlow = "";
+            if (result.name.includes("安壞")) {
+                roleFlow = `\n\n📌 **【角色業力流向】**：\n根據代碼公式，在此干涉場中：\n* **${charA.name}** 扮演的是「壞（破壞/挑戰者）」角色。\n* **${charB.name}** 扮演的是「安（掌控/築牆者）」角色。\n「壞」天生會打破「安」的規則，而「安」則會本能試圖限制「壞」。`;
+            } else if (result.name.includes("危成")) {
+                roleFlow = `\n\n📌 **【角色業力流向】**：\n根據代碼公式，在此干涉場中：\n* **${charA.name}** 扮演的是「危（危害/受惠方）」角色。\n* **${charB.name}** 扮演的是「成（成就/工具人）」角色。\n「成」會無怨無悔地付出資源來成就「危」，而「危」則是這場關係中的終極受益者。`;
+            } else if (result.name.includes("友衰")) {
+                roleFlow = `\n\n📌 **【角色業力流向】**：\n根據代碼公式，在此干涉場中：\n* **${charA.name}** 扮演的是「衰（消耗/被愛方）」角色。\n* **${charB.name}** 扮演的是「友（付出/陪伴方）」角色。\n「友」會傾盡全力給予「衰」滿滿的陪伴與情感，但「衰」在無形中會像黑洞一樣吸走「友」的時間與專注力。`;
+            }
+
+            relationDetail.textContent = result.desc + roleFlow + `\n\n🎮 **【玩家破局攻略】**：\n既然這只是系統分配的初始重力場，你就完全不需要被規則綁死。明白這段關係的 Bug 在哪裡，你就能『隨心所欲』地在生活中調度能量，把他們當成你人生遊戲裡的專屬副本！`;
+
+            reportSection.style.display = "block";
+            // 平滑捲動到報告區域
+            reportSection.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
