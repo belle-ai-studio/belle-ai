@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belle AI 每日心理測驗</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, #fff7f1, transparent 35%),
+        radial-gradient(circle at bottom right, #f8e8e3, transparent 35%),
+        #fffaf6;
+      color: #4a352d;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(92%, 760px);
+      margin: 0 auto;
+      padding: 30px 0 60px;
+    }
+
+    .brand {
+      text-align: center;
+      font-size: 18px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      color: #8c6255;
+    }
+
+    .brand span {
+      margin: 0 5px;
+    }
+
+    .card {
+      background: rgba(255,255,255,.88);
+      border-radius: 26px;
+      padding: 26px;
+      box-shadow: 0 12px 40px rgba(111, 75, 59, .10);
+      border: 1px solid #f0ded4;
+    }
+
+    .date {
+      text-align: center;
+      color: #b18477;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: clamp(26px, 6vw, 38px);
+      margin: 8px 0 12px;
+      line-height: 1.35;
+    }
+
+    .intro {
+      text-align: center;
+      color: #8b7770;
+      line-height: 1.8;
+      margin: 0 auto 24px;
+      font-size: 15px;
+    }
+
+    .quiz-image {
+      display: block;
+      width: 100%;
+      border-radius: 20px;
+      border: 1px solid #ead8cf;
+      background: #f8eee9;
+      margin-top: 12px;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .choice {
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 6px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #f4e7e2;
+      color: #704f45;
+      transition: .2s ease;
+    }
+
+    .choice:hover {
+      transform: translateY(-2px);
+      background: #ead7d0;
+    }
+
+    .choice.selected {
+      background: #a97869;
+      color: white;
+    }
+
+    .hint {
+      text-align: center;
+      margin: 15px 0 0;
+      color: #a08b83;
+      font-size: 13px;
+    }
+
+    .result {
+      display: none;
+      margin-top: 25px;
+      padding: 23px;
+      border-radius: 20px;
+      background: #fff7f3;
+      border: 1px solid #ead6ce;
+      animation: appear .4s ease;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result-label {
+      color: #b37f70;
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
+
+    .result h2 {
+      margin: 0 0 13px;
+      font-size: 23px;
+      line-height: 1.5;
+    }
+
+    .result-text {
+      line-height: 1.9;
+      font-size: 16px;
+      color: #57443d;
+    }
+
+    .reminder {
+      margin-top: 18px;
+      padding: 15px 17px;
+      border-radius: 14px;
+      background: #f1e3dd;
+      line-height: 1.7;
+    }
+
+    .reminder strong {
+      color: #9f6e60;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #a28b82;
+    }
+
+    .preview {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 12px;
+      color: #b29b92;
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        width: 94%;
+        padding-top: 16px;
+      }
+
+      .card {
+        padding: 18px 14px 22px;
+      }
+
+      .choices {
+        gap: 7px;
+      }
+
+      .choice {
+        padding: 12px 4px;
+        font-size: 18px;
+      }
+
+      .result {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="brand">
+    🐾 <span>Belle AI 每日心理測驗</span> 🐾
+  </div>
+
+  <div class="card">
+
+    <div class="date" id="dateText"></div>
+
+    <h1 id="question"></h1>
+
+    <p class="intro" id="prompt"></p>
+
+    <img
+      id="quizImage"
+      class="quiz-image"
+      src=""
+      alt="Belle AI 每日心理測驗"
+    >
+
+    <div class="choices">
+      <button class="choice" onclick="showResult('A', this)">A</button>
+      <button class="choice" onclick="showResult('B', this)">B</button>
+      <button class="choice" onclick="showResult('C', this)">C</button>
+      <button class="choice" onclick="showResult('D', this)">D</button>
+    </div>
+
+    <p class="hint">
+      別想太久，選第一個讓你有感覺的畫面 ♡
+    </p>
+
+    <div class="result" id="resultBox">
+
+      <div class="result-label" id="resultLabel"></div>
+
+      <h2 id="resultTitle"></h2>
+
+      <div class="result-text" id="resultText"></div>
+
+      <div class="reminder">
+        <strong>今日提醒｜</strong>
+        <span id="resultReminder"></span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="footer">
+    這是一個自我覺察小測驗，沒有標準答案。<br>
+    直覺有時候，只是在提醒你最近比較在意什麼。
+    <br><br>
+    🐶🐱 Belle AI
+  </div>
+
+</div>
+
+
+<script>
+
+const quizzes = [
+
+  {
+    date: "9 月 1 日",
+    question: "我最近有虧待自己嗎？",
+    prompt: "最近的你，有沒有在不知不覺中把自己排到了最後？第一眼，你最想待在哪個地方？",
+    image: "images/daily/0901.png",
+
+    answers: {
+
+      A: {
+        title: "你虧待的是「自己的時間」",
+        text: "你可能不是沒有休息，而是連休息都帶著目的：滑手機回訊息、吃飯順便處理事情，甚至放假還在想下一件該完成什麼。久了以後，真正被擠掉的，是那些沒有用、但你就是喜歡的時間。你最近需要的，可能不是再安排一次休假，而是重新允許生活裡存在一些沒有產值的快樂。",
+        reminder: "留 30 分鐘給一件不需要有成果的事。喜歡，本身就已經是一個理由。"
+      },
+
+      B: {
+        title: "你虧待的是「自己的想要」",
+        text: "你可能很擅長衡量值不值得、需不需要、現在是不是適合，久了甚至會在慾望剛冒出來時，就先把它壓回去。這讓你看起來很理性，但偶爾也會忘記問自己：「如果不用考慮那麼多，我其實想要什麼？」照顧自己不等於放縱，有時只是承認自己的需求也值得被放進考量。",
+        reminder: "今天滿足自己一個很小的願望，不需要替它找一個合理的理由。"
+      },
+
+      C: {
+        title: "你虧待的是「自己的感受」",
+        text: "你可能很容易先理解別人：「他可能有他的原因」、「事情也不能全怪他」。這種理解力很好，但有時候理解別人太快，自己的感受反而還沒來得及被聽見。知道別人的難處，和自己真的沒有受傷，是兩件不同的事。最近的你可能需要的不是更多分析，而是先承認那個最原始的感覺。",
+        reminder: "遇到一件不舒服的事，先不要解釋任何人，只回答：「我其實感覺＿＿＿。」"
+      },
+
+      D: {
+        title: "你虧待的是「身體的休息」",
+        text: "你可能很容易把「我還做得動」當成「我還不累」。事情沒完成就休息，甚至會讓你產生一點罪惡感，所以真正的休息總被排在最後。但人的身體不是等工作清單歸零才需要充電。長期撐住不代表沒有消耗，有時候只是你已經太習慣疲累。",
+        reminder: "今天挑一件「明天做也沒關係」的事情，刻意留到明天。"
+      }
+    }
+  },
+
+
+  {
+    date: "9 月 2 日",
+    question: "我現在最累的是哪一種累？",
+    prompt: "如果現在可以暫時放下一件事，你最想放下哪一個？",
+    image: "images/daily/0902.png",
+
+    answers: {
+
+      A: {
+        title: "你累的是「一直有事情要負責」",
+        text: "你真正累的可能不是事情很多，而是腦袋一直處於「不能漏掉任何事」的狀態。即使坐下來了，你仍然在盤算下一件事、怕忘記什麼、擔心哪裡出錯。這種疲勞往往不是睡一晚就會消失，因為真正沒有休息的是你的注意力。你需要的可能不是更有效率，而是有些事情真的可以不用由你掌控。",
+        reminder: "找一件可以交出去、延後，或做到 80 分就好的事情。"
+      },
+
+      B: {
+        title: "你累的是「一直感受別人的情緒」",
+        text: "一句話的語氣、一個人的臉色、一場氣氛不對的對話，都可能讓你的腦袋偷偷運轉很久。你未必害怕人際關係，而是太容易接收到環境裡的訊號，還會忍不住分析：「是不是哪裡不對？」久了真正消耗你的，不一定是某個人，而是你一直處在接收模式。",
+        reminder: "遇到別人的情緒時提醒自己：「這個情緒不一定需要由我處理。」"
+      },
+
+      C: {
+        title: "你累的是「不知道下一步該往哪裡走」",
+        text: "你可能不是沒有能力，而是眼前同時有太多可能性。每一條路似乎都有代價，於是腦袋不斷模擬各種結果，最後連開始都變得很耗力。這種累常常看起來像拖延，其實背後可能是你太希望做出正確選擇。可是很多答案，本來就只有走出去以後才會出現。",
+        reminder: "不決定整條路，只決定下一步要做什麼。"
+      },
+
+      D: {
+        title: "你累的是「真的沒電了」",
+        text: "你的疲累可能沒有那麼複雜——就是累了。只是當生活一直往前跑，人很容易開始替疲倦找理由：「是不是我太懶？」其實身體與注意力都有容量。當容量接近底線，再簡單的事情都會變得困難。這時候逼自己振作，通常只會增加另一層消耗。",
+        reminder: "今天的目標不是恢復 100%，先停止繼續耗電就好。"
+      }
+    }
+  },
+
+
+  {
+    date: "9 月 3 日",
+    question: "現在的我，內心最缺的是什麼？",
+    prompt: "如果今天可以打開一扇門，你第一眼最想走進哪裡？",
+    image: "images/daily/0903.png",
+
+    answers: {
+
+      A: {
+        title: "你現在比較缺「安全感」",
+        text: "你可能不是想要生活毫無變化，而是希望有一個地方、一段關係或一種狀態，讓自己暫時不用警戒、不必一直預測下一步。當不確定的事情累積太多，人會自然渴望可掌握的東西。你需要的安全感未必一定來自別人，有時只是重新建立一些「我知道自己可以做到」的小小確定性。",
+        reminder: "今天完成一件你完全可以掌握的小事，讓自己重新感受到穩定。"
+      },
+
+      B: {
+        title: "你現在比較缺「自由」",
+        text: "你最近可能有不少「應該」：應該完成、應該配合、應該成熟、應該顧慮。久了以後，真正的自己會有一點想逃出去透氣。你不一定真的想丟掉現在的生活，只是內心需要重新感覺到：「我還有選擇。」自由不一定是離開，有時候只是讓自己重新擁有一點決定權。",
+        reminder: "今天找一件小事，完全按照自己的喜好決定。"
+      },
+
+      C: {
+        title: "你現在比較缺「被照顧」",
+        text: "你可能已經很習慣自己處理事情，甚至別人問「需要幫忙嗎？」時，第一反應都是「不用」。但能自己做到，和永遠都必須自己做到，是兩回事。你現在渴望的未必是有人替你解決問題，而是偶爾不用當那個最可靠的人，也有人願意注意你的需要。",
+        reminder: "今天允許別人替你做一件小事，不急著說「我自己來」。"
+      },
+
+      D: {
+        title: "你現在比較缺「新的可能」",
+        text: "你的生活可能沒有明顯不好，但某個部分開始覺得重複。你渴望的不是刺激本身，而是重新感受到「還有東西值得期待」。當人長時間只處理眼前任務，未來很容易變成另一張待辦清單。你的內心可能正在提醒你，需要一個真正屬於自己的新鮮感。",
+        reminder: "今天查一件一直有點想嘗試、但從沒認真了解過的事情。"
+      }
+    }
+  },
+
+
+  {
+    date: "9 月 4 日",
+    question: "我在人際關係裡，最容易委屈自己什麼？",
+    prompt: "別想太久，哪個畫面最讓你有「好像是我」的感覺？",
+    image: "images/daily/0904.png",
+
+    answers: {
+
+      A: {
+        title: "你容易委屈自己的「存在感」",
+        text: "你可能不太喜歡搶位置，也不一定需要成為焦點，所以在人群裡很自然地把空間讓給別人。但時間久了，別人可能真的習慣忽略你的需要。問題不在於你安靜，而是你有時候連應該屬於自己的位置都一起讓掉了。被看見並不等於搶風頭，表達需求也不代表麻煩別人。",
+        reminder: "今天至少有一次，不要說「都可以」，說出你真正比較想要的選擇。"
+      },
+
+      B: {
+        title: "你容易委屈自己的「責任界線」",
+        text: "看到事情沒人做，你可能很容易順手接起來；看到別人有困難，也會想著「算了，我來比較快」。久了以後，你承擔的東西可能比自己意識到的更多。真正讓人疲累的往往不是幫忙，而是幫忙逐漸變成理所當然。善意需要界線，否則最後最容易被忽略的人反而是自己。",
+        reminder: "今天答應一件事以前，先問：「這件事真的需要由我負責嗎？」"
+      },
+
+      C: {
+        title: "你容易委屈自己的「選擇」",
+        text: "你可能很會配合，也很懂得考慮現實，所以常常覺得「這樣也可以」。但一次兩次沒有關係，長期都把自己的偏好放到最後，內心會慢慢累積一種說不上來的不舒服。你不一定需要跟別人對抗，只需要讓自己的選擇也有機會進入討論。",
+        reminder: "今天有一個選擇，先說自己的答案，再聽別人的。"
+      },
+
+      D: {
+        title: "你容易委屈自己的「情緒空間」",
+        text: "你可能很會聽別人說話，也常常成為別人傾訴的對象。但當輪到自己時，反而容易覺得「沒什麼好說的」或「講了也不能怎樣」。久了你會很了解所有人的故事，卻很少有人真正知道你最近怎麼了。被理解並不是軟弱，而是關係裡正常的雙向流動。",
+        reminder: "找一個你信任的人，今天不要只聽，也分享一件自己的事。"
+      }
+    }
+  },
+
+
+  {
+    date: "9 月 5 日",
+    question: "最近真正卡住我的，是什麼？",
+    prompt: "第一眼，哪個障礙最讓你有感覺？",
+    image: "images/daily/0905.png",
+
+    answers: {
+
+      A: {
+        title: "你卡在「對自己的要求太高」",
+        text: "你可能不是做不到，而是心裡對「做到」的標準設得很高。當起點和理想成果距離太遠，大腦很容易乾脆延後開始，因為一開始就已經感覺到壓力。你需要的可能不是再逼自己努力，而是允許第一版很普通。很多真正做得好的事情，都曾經有一個並不好看的開始。",
+        reminder: "把一件卡住的事情做出 60 分版本，先完成，再改善。"
+      },
+
+      B: {
+        title: "你卡在「選擇太多」",
+        text: "每個選項似乎都有優點，你也很容易看到每個決定可能帶來的後果。這讓你比別人考慮得周全，卻也可能因此一直停留在比較階段。當資訊增加到某個程度後，更多分析不一定會帶來更好的答案。你現在缺的可能不是資訊，而是一個願意承擔選擇的時刻。",
+        reminder: "替自己設定一個決定期限，到點就選，不再繼續蒐集。"
+      },
+
+      C: {
+        title: "你卡在「捨不得放掉」",
+        text: "有些東西可能早就不適合現在的你，但因為已經投入時間、感情或努力，所以放掉反而讓人覺得可惜。於是那些細小的牽掛沒有真正阻止你，卻一直拉住你的腳步。往前走有時候不是增加更多，而是承認某些東西已經完成它在你生命裡的任務。",
+        reminder: "想一件一直拖著的事，問自己：「如果今天重新選，我還會選它嗎？」"
+      },
+
+      D: {
+        title: "你卡在「看不清結果」",
+        text: "你可能不是害怕行動，而是希望先知道走出去會發生什麼。偏偏現在這件事情沒有足夠資訊讓你確定，所以每一步都像走進霧裡。但有些階段本來就沒有完整地圖，清晰感不是思考出來的，而是走過第一小段之後才慢慢出現。",
+        reminder: "不要求看清終點，只找出現在視線裡看得到的下一步。"
+      }
+    }
+  },
+
+
+  {
+    date: "9 月 6 日",
+    question: "別人眼中的我，和真正的我差多少？",
+    prompt: "哪一面鏡子，最像你給別人的印象？",
+    image: "images/daily/0906.png",
+
+    answers: {
+
+      A: {
+        title: "大家可能比你自己更相信你很堅強",
+        text: "別人遇到事情可能很自然地想到你，因為你看起來能處理、能扛住，也不容易慌。但「有能力處理」不代表你每次都想當那個處理的人。你真正的自己可能比外表柔軟，也會希望偶爾有人先問一句：「你還好嗎？」而不是直接認定你一定沒問題。",
+        reminder: "不必等到撐不住才表達需要。今天可以提早說一次「我需要幫忙」。"
+      },
+
+      B: {
+        title: "別人可能以為你比實際上更沒事",
+        text: "你可能習慣用笑、聊天或輕描淡寫消化很多事情，因此旁人很容易覺得你恢復得很快。但有些情緒只是沒有放在外面，不代表已經消失。你不需要刻意變得沉重，只是偶爾可以讓親近的人知道，笑著說「沒事」的你也有正在消化的部分。",
+        reminder: "如果有人問你好不好，可以試著回答得比「還好啊」多一句。"
+      },
+
+      C: {
+        title: "別人可能以為你很冷靜，其實你想得很多",
+        text: "你外表可能很少立刻反應，遇到事情會先觀察、整理，再決定要不要說。但安靜並不代表沒有感受，很多時候你的腦袋早已跑過很多版本。因為別人看不到這個過程，偶爾會誤以為你不在意。你不需要把所有想法都說出來，但重要的關係值得多一點翻譯。",
+        reminder: "把一個「我以為你應該知道」的想法，真的說出來。"
+      },
+
+      D: {
+        title: "別人可能以為你什麼都能自己來",
+        text: "你確實有很強的自我處理能力，很多事情不需要等別人就可以完成。但獨立久了，周圍的人也可能逐漸忘記主動靠近，因為他們認為「你不需要」。真正的獨立不是拒絕依靠，而是知道自己有能力選擇什麼時候自己來、什麼時候接受別人的手。",
+        reminder: "今天有一件小事，不要因為「我自己也可以」就拒絕別人的好意。"
+      }
+    }
+  },
+
+
+  {
+    date: "9 月 7 日",
+    question: "下一週，我最該把力氣留給什麼？",
+    prompt: "如果下一週是一條新的道路，你第一眼最想走向哪裡？",
+    image: "images/daily/0907.png",
+
+    answers: {
+
+      A: {
+        title: "把力氣留給「自己」",
+        text: "下一週不一定需要再完成更多，也許更重要的是把一部分注意力收回自己身上。當生活裡有很多人、很多事情需要回應，我們很容易只剩下「功能」，忘記自己也有喜好、節奏和情緒。照顧自己並不是停止前進，而是讓接下來的努力有一個比較穩定的出發點。",
+        reminder: "在行事曆裡先替自己留一段時間，再安排其他事情。"
+      },
+
+      B: {
+        title: "把力氣留給「真正重要的目標」",
+        text: "你下一週可能不缺事情做，真正需要的是分辨哪些事情值得你的力氣。忙碌很容易製造「我正在前進」的感覺，但最重要的事情反而可能一直被瑣事擠到後面。與其每件事都完成，不如挑出一件如果推進了，會真正讓你感到踏實的事。",
+        reminder: "選出唯一一件「這週完成就值得」的事情，把最好的精神先給它。"
+      },
+
+      C: {
+        title: "把力氣留給「值得的人」",
+        text: "最近的你可能太習慣處理事情，反而少了一點真正的連結。下一週值得投入的，不一定是更多社交，而是那些和你相處後不需要恢復體力的人。好的關係不只是陪伴，也會讓人重新感覺到自己被理解、被記得，而且不必一直扮演某個角色。",
+        reminder: "主動找一個你想到就會覺得安心的人，留一點真正聊天的時間。"
+      },
+
+      D: {
+        title: "把力氣留給「新的嘗試」",
+        text: "下一週適合替生活打開一個小缺口。你不需要做巨大改變，只要做一件和平常不同的事情，就可能讓停滯的感覺鬆動。新的刺激會讓我們重新注意生活，也比較容易看見原本沒想到的可能。重點不是成功，而是讓自己重新產生一點好奇心。",
+        reminder: "做一件「有點想試、但一直沒有理由去做」的小事。"
+      }
+    }
+  }
+
+];
+
+
+/* =============================
+   自動判斷日期
+   ============================= */
+
+function getQuizIndex() {
+
+  const params = new URLSearchParams(window.location.search);
+
+  // 測試網址可以使用 daily.html?day=1 ~ day=7
+  const previewDay = Number(params.get("day"));
+
+  if (previewDay >= 1 && previewDay <= 7) {
+    return previewDay - 1;
+  }
+
+  const now = new Date();
+
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+
+  if (month === 9 && day >= 1 && day <= 7) {
+    return day - 1;
+  }
+
+  // 9/1以前先顯示第一題
+  if (month < 9) {
+    return 0;
+  }
+
+  // 9/7之後先停留在第七題
+  return 6;
+}
+
+
+const quizIndex = getQuizIndex();
+const currentQuiz = quizzes[quizIndex];
+
+
+document.getElementById("dateText").textContent = currentQuiz.date;
+document.getElementById("question").textContent = currentQuiz.question;
+document.getElementById("prompt").textContent = currentQuiz.prompt;
+document.getElementById("quizImage").src = currentQuiz.image;
+
+
+function showResult(choice, button) {
+
+  document.querySelectorAll(".choice").forEach(btn => {
+    btn.classList.remove("selected");
+  });
+
+  button.classList.add("selected");
+
+  const answer = currentQuiz.answers[choice];
+
+  document.getElementById("resultLabel").textContent =
+    "你選擇了 " + choice;
+
+  document.getElementById("resultTitle").textContent =
+    answer.title;
+
+  document.getElementById("resultText").textContent =
+    answer.text;
+
+  document.getElementById("resultReminder").textContent =
+    answer.reminder;
+
+  const resultBox = document.getElementById("resultBox");
+
+  resultBox.classList.add("show");
+
+  setTimeout(() => {
+    resultBox.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }, 100);
+}
+
+</script>
+
+</body>
+</html>
