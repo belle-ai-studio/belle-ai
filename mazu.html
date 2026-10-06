@@ -3,139 +3,195 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>聖母酷解｜現代線上媽祖廟</title>
+  <title>天上聖母｜現代靈籤與聖杯</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: #121212;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top, #1e132b 0%, #0a0812 100%);
+      color: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Heiti TC", "Microsoft JhengHei", sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 15px;
+      padding: 20px;
       text-align: center;
     }
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #e5c158;
+      margin-bottom: 24px;
+      text-shadow: 0 0 15px rgba(229, 193, 88, 0.4);
+    }
     .card {
-      background: #1e1e1e;
-      border-radius: 20px;
-      padding: 20px;
+      background: rgba(22, 18, 33, 0.75);
+      border-radius: 28px;
+      padding: 28px 22px;
       width: 100%;
-      max-width: 320px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      border: 1px solid #333;
+      max-width: 350px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(229, 193, 88, 0.2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
     .tab-buttons {
       display: flex;
-      margin-bottom: 20px;
-      background: #2a2a2a;
-      border-radius: 12px;
-      padding: 3px;
+      margin-bottom: 24px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 18px;
+      padding: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
     .tab-btn {
       flex: 1;
-      padding: 8px 0;
+      padding: 11px 0;
       border: none;
       background: transparent;
-      color: #aaa;
+      color: #8c89a0;
       font-size: 15px;
-      font-weight: bold;
-      border-radius: 10px;
+      font-weight: 600;
+      border-radius: 14px;
       cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .tab-btn.active {
-      background: #e63946;
-      color: #fff;
+      background: linear-gradient(135deg, #b32d2e 0%, #801d24 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(179, 45, 46, 0.4);
     }
     .section { display: none; }
     .section.active { display: block; }
     
     .icon-container {
-      font-size: 55px;
-      margin: 15px 0;
-      min-height: 75px;
+      height: 100px;
+      margin: 10px 0 20px 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 15px;
     }
+    
+    .biao-svg {
+      width: 55px;
+      height: 55px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+      transition: transform 0.4s ease;
+    }
+
     .shake {
-      animation: shake 0.5s infinite;
+      animation: shake 0.6s infinite ease-in-out;
     }
     @keyframes shake {
-      0% { transform: rotate(0deg); }
-      25% { transform: rotate(-12deg); }
-      75% { transform: rotate(12deg); }
-      100% { transform: rotate(0deg); }
+      0% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-18deg) translateY(-8px); }
+      75% { transform: rotate(18deg) translateY(-4px); }
+      100% { transform: rotate(0deg) scale(1); }
     }
     
     .btn {
-      background: #e63946;
-      color: white;
+      background: linear-gradient(135deg, #e5c158 0%, #b88e28 100%);
+      color: #120e1a;
       border: none;
-      padding: 12px 24px;
+      padding: 15px 28px;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
       width: 100%;
-      margin-top: 15px;
-      transition: background 0.2s;
+      margin-top: 22px;
+      box-shadow: 0 4px 20px rgba(229, 193, 88, 0.25);
+      transition: all 0.2s ease;
+      letter-spacing: 1px;
     }
-    .btn:active { background: #b82a36; }
+    .btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 2px 10px rgba(229, 193, 88, 0.15);
+    }
     
     .result-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #ffb703;
-      margin-top: 10px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #e5c158;
+      margin-top: 8px;
+      letter-spacing: 1px;
     }
     .result-poem {
       font-size: 15px;
-      color: #ffd166;
+      color: #f3e5ab;
       font-style: italic;
-      margin: 8px 0;
-      line-height: 1.5;
-    }
-    .result-desc {
-      font-size: 13px;
-      color: #ddd;
-      margin-top: 8px;
-      line-height: 1.5;
-      background: #282828;
-      padding: 10px;
-      border-radius: 10px;
+      margin: 14px 0;
+      line-height: 1.6;
+      background: rgba(229, 193, 88, 0.08);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border-left: 3px solid #e5c158;
       text-align: left;
     }
+    .result-desc {
+      font-size: 14px;
+      color: #c0bdd3;
+      margin-top: 12px;
+      line-height: 1.6;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 14px;
+      border-radius: 14px;
+      text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
     .result-desc span {
-      color: #e63946;
-      font-weight: bold;
+      color: #e74c3c;
+      font-weight: 700;
     }
   </style>
 </head>
 <body>
 
+  <div class="header-title">天上聖母 ‧ 線上指點</div>
+
   <div class="card">
     <div class="tab-buttons">
       <button class="tab-btn active" onclick="switchTab('divination')">請示擲筊</button>
-      <button class="tab-btn" onclick="switchTab('fortune')">求媽祖籤</button>
+      <button class="tab-btn" onclick="switchTab('fortune')">虔心求籤</button>
     </div>
 
     <!-- 擲筊區塊 -->
     <div id="divination" class="section active">
-      <div id="biao-icon" class="icon-container">🌙 🌙</div>
-      <div id="biao-result" class="result-title">向媽祖稟告</div>
+      <div id="biao-icon" class="icon-container">
+        <!-- SVG 聖杯 Left -->
+        <svg id="biao-left" class="biao-svg" viewBox="0 0 100 100">
+          <path d="M 20 50 A 30 30 0 0 0 80 50 A 20 20 0 0 1 20 50 Z" fill="url(#redG)" stroke="#5a0000" stroke-width="2"/>
+          <defs>
+            <linearGradient id="redG" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff4d4d"/>
+              <stop offset="100%" stop-color="#990000"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <!-- SVG 聖杯 Right -->
+        <svg id="biao-right" class="biao-svg" viewBox="0 0 100 100" style="transform: scaleX(-1);">
+          <path d="M 20 50 A 30 30 0 0 0 80 50 A 20 20 0 0 1 20 50 Z" fill="url(#redG)" stroke="#5a0000" stroke-width="2"/>
+        </svg>
+      </div>
+      <div id="biao-result" class="result-title">向聖母稟告</div>
       <div id="biao-desc" class="result-desc" style="text-align:center;">心裡默念姓名、生日與問題，點擊下方擲筊請示聖意。</div>
-      <button class="btn" onclick="castBiao()">開始擲筊</button>
+      <button class="btn" onclick="castBiao()">誠心擲筊</button>
     </div>
 
     <!-- 求籤區塊 -->
     <div id="fortune" class="section">
-      <div id="stick-icon" class="icon-container">🌊</div>
-      <div id="stick-result" class="result-title">媽祖靈籤</div>
-      <div id="stick-poem" class="result-poem"></div>
-      <div id="stick-desc" class="result-desc" style="text-align:center;">虔誠搖動籤筒，請媽祖指點迷津。</div>
+      <div id="stick-icon" class="icon-container">
+        <svg class="biao-svg" viewBox="0 0 100 100" style="width:70px; height:70px;">
+          <rect x="35" y="30" width="30" height="55" rx="5" fill="#2a1f10" stroke="#e5c158" stroke-width="3"/>
+          <line x1="42" y1="15" x2="42" y2="30" stroke="#e5c158" stroke-width="3" stroke-linecap="round"/>
+          <line x1="50" y1="10" x2="50" y2="30" stroke="#ff4d4d" stroke-width="3" stroke-linecap="round"/>
+          <line x1="58" y1="18" x2="58" y2="30" stroke="#e5c158" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div id="stick-result" class="result-title">聖母靈籤</div>
+      <div id="stick-poem" class="result-poem" style="display:none;"></div>
+      <div id="stick-desc" class="result-desc" style="text-align:center;">虔誠搖動籤筒，請聖母指點迷津。</div>
       <button class="btn" onclick="drawStick()">搖筒求籤</button>
     </div>
   </div>
@@ -155,33 +211,38 @@
 
     // 擲筊邏輯
     function castBiao() {
-      const icon = document.getElementById('biao-icon');
+      const container = document.getElementById('biao-icon');
+      const leftBiao = document.getElementById('biao-left');
+      const rightBiao = document.getElementById('biao-right');
       const title = document.getElementById('biao-result');
       const desc = document.getElementById('biao-desc');
       
-      icon.classList.add('shake');
+      container.classList.add('shake');
       title.innerText = '聖意斟酌中...';
       desc.innerText = '';
 
       setTimeout(() => {
-        icon.classList.remove('shake');
+        container.classList.remove('shake');
         const rand = Math.random();
         
-        if (rand < 0.5) { // 聖筊
-          icon.innerText = '🌙 ☁️';
+        if (rand < 0.5) { // 聖筊 (一正一反)
+          leftBiao.style.transform = 'rotate(0deg) scaleY(1)';
+          rightBiao.style.transform = 'scaleX(-1) scaleY(-1) rotate(15deg)';
           title.innerText = '【聖筊】';
-          title.style.color = '#4caf50';
-          desc.innerHTML = '<span>媽祖指示：</span>準了！照你的直覺去做，順勢而為，免驚！';
-        } else if (rand < 0.75) { // 笑筊
-          icon.innerText = '☁️ ☁️';
+          title.style.color = '#2ecc71';
+          desc.innerHTML = '<span>聖母指示：</span>準了！照你的直覺去做，順勢而為，免驚！';
+        } else if (rand < 0.75) { // 笑筊 (兩反)
+          leftBiao.style.transform = 'rotate(180deg) scaleY(-1)';
+          rightBiao.style.transform = 'scaleX(-1) scaleY(-1) rotate(0deg)';
           title.innerText = '【笑筊】';
-          title.style.color = '#ff9800';
-          desc.innerHTML = '<span>媽祖微笑：</span>問得太含糊或你自己早就心知膽明，再想清楚一點重問吧！';
-        } else { // 陰筊
-          icon.innerText = '🌙 🌙';
+          title.style.color = '#e5c158';
+          desc.innerHTML = '<span>聖母微笑：</span>問得太含糊或你自己早就心知肚明，再想清楚一點重問吧！';
+        } else { // 陰筊 (兩正)
+          leftBiao.style.transform = 'rotate(0deg)';
+          rightBiao.style.transform = 'scaleX(-1) rotate(0deg)';
           title.innerText = '【陰筊】';
-          title.style.color = '#f44336';
-          desc.innerHTML = '<span>媽祖搖頭：</span>這事先停一下！時機不對或方向有誤，硬衝會受傷。';
+          title.style.color = '#e74c3c';
+          desc.innerHTML = '<span>聖母搖頭：</span>這事先停一下！時機不對或方向有誤，硬衝會受傷。';
         }
       }, 700);
     }
@@ -192,61 +253,61 @@
         level: '大吉',
         title: '第一籤：順風順水',
         poem: '風平浪靜好行舟，大展鴻圖在目前。',
-        desc: '<span>【媽祖開示】</span><br>職場：順風順水，建議主動出擊或提出想法！<br>財運：穩健獲利，但記得落袋為安。<br>感情：緣分已到位，別再龜毛了！'
+        desc: '<span>【聖母開示】</span><br>職場：順風順水，建議主動出擊或提出想法！<br>財運：穩健獲利，但記得落袋為安。<br>感情：緣分已到位，別再龜毛了！'
       },
       {
         level: '上吉',
         title: '第二籤：貴人相助',
         poem: '海中明珠光閃耀，自有人前引路來。',
-        desc: '<span>【媽祖開示】</span><br>職場：這陣子會遇到給力的神隊友或貴人主管。<br>投資：聽專家或身邊靠譜朋友的建議，別盲目跟風。<br>健康：少熬夜，貴人可救不了你的肝！'
+        desc: '<span>【聖母開示】</span><br>職場：這陣子會遇到給力的神隊友或貴人主管。<br>投資：聽專家或身邊靠譜朋友的建議，別盲目跟風。<br>健康：少熬夜，貴人可救不了你的肝！'
       },
       {
         level: '中吉',
         title: '第三籤：穩住別慌',
         poem: '風浪雖然稍微大，掌緊船舵自無憂。',
-        desc: '<span>【媽祖開示】</span><br>職場：最近可能會被突發狀況洗禮，冷靜處理就能過關。<br>感情：有點小摩擦，少說兩句酸話，多聽對方說。<br>開運：喝杯熱拿鐵，給自己五分鐘靜心。'
+        desc: '<span>【聖母開示】</span><br>職場：最近可能會被突發狀況洗禮，冷靜處理就能過關。<br>感情：有點小摩擦，少說兩句酸話，多聽對方說。<br>開運：喝杯熱拿鐵，給自己五分鐘靜心。'
       },
       {
         level: '平籤',
         title: '第四籤：躺平養生',
         poem: '舟行淺灘宜等待，潮水漲時自然通。',
-        desc: '<span>【媽祖開示】</span><br>生活：最近別硬衝，適合「低功耗運作」。<br>職場：做完份內事就好，不要主動攬事做。<br>錢財：管住你的手，離購物車和交割戶遠一點！'
+        desc: '<span>【聖母開示】</span><br>生活：最近別硬衝，適合「低功耗運作」。<br>職場：做完份內事就好，不要主動攬事做。<br>錢財：管住你的手，離購物車和交割戶遠一點！'
       },
       {
         level: '酷籤',
         title: '第五籤：醒醒吧你',
         poem: '水中撈月空費力，夢裡尋花鏡中香。',
-        desc: '<span>【媽祖開示】</span><br>感情：對方喜不喜歡你你自己心裡沒數嗎？別再腦補了！<br>職場：想離職先看存款，別衝動遞辭呈。<br>提醒：洗洗睡吧，夢裡什麼都有。'
+        desc: '<span>【聖母開示】</span><br>感情：對方喜不喜歡你你自己心裡沒數嗎？別再腦補了！<br>職場：想離職先看存款，別衝動遞辭呈。<br>提醒：洗洗睡吧，夢裡什麼都有。'
       },
       {
         level: '上吉',
         title: '第六籤：轉角遇到愛',
         poem: '桃花開在春風裡，月老紅線已牽成。',
-        desc: '<span>【媽祖開示】</span><br>感情：單身者多出去走走，最近氣場很吸人！<br>職場：人際關係大拉升，適合拓展合作交流。<br>小撇步：穿亮一點的衣服會有奇效。'
+        desc: '<span>【聖母開示】</span><br>感情：單身者多出去走走，最近氣場很吸人！<br>職場：人際關係大拉升，適合拓展合作交流。<br>小撇步：穿亮一點的衣服會有奇效。'
       },
       {
         level: '中平',
         title: '第七籤：防範小人',
         poem: '暗潮湧動需留意，講話留心防小人。',
-        desc: '<span>【媽祖開示】</span><br>職場：辦公室八卦少聽少講，小心被當槍使。<br>財務：借錢免談，不管是誰借都說「錢被媽祖拿去扣押了」。'
+        desc: '<span>【聖母開示】</span><br>職場：辦公室八卦少聽少講，小心被當槍使。<br>財務：借錢免談，不管是誰借都說「錢被媽祖拿去扣押了」。'
       },
       {
         level: '大吉',
         title: '第八籤：財神敲門',
         poem: '金山銀山鋪滿路，勤勞致富好時機。',
-        desc: '<span>【媽祖開示】</span><br>財運：偏財運不錯，買發票或刮刮樂有機會！<br>職涯：加薪或拿到業績獎金的機率高，加油把這波拿下來。'
+        desc: '<span>【聖母開示】</span><br>財運：偏財運不錯，買發票或刮刮樂有機會！<br>職涯：加薪或拿到業績獎金的機率高，加油把這波拿下來。'
       },
       {
         level: '特籤',
         title: '第九籤：強制休假',
         poem: '身體才是本錢在，莫為浮名累了身。',
-        desc: '<span>【媽祖開示】</span><br>健康警告：肩頸是不是很酸？眼睛是不是很乾？<br>媽祖命令：今天下班不許加班，體貼自己吃頓好的！'
+        desc: '<span>【聖母開示】</span><br>健康警告：肩頸是不是很酸？眼睛是不是很乾？<br>媽祖命令：今天下班不許加班，體貼自己吃頓好的！'
       },
       {
         level: '大吉',
         title: '第十籤：海闊天空',
         poem: '千江有水千江月，萬里無雲萬里天。',
-        desc: '<span>【媽祖開示】</span><br>心境：困擾你很久的事情終於要解開了。<br>未來：保持信心，跨過去之後一片光明，媽祖在後面罩你！'
+        desc: '<span>【聖母開示】</span><br>心境：困擾你很久的事情終於要解開了。<br>未來：保持信心，跨過去之後一片光明，媽祖在後面罩你！'
       }
     ];
 
@@ -258,17 +319,17 @@
       const desc = document.getElementById('stick-desc');
       
       icon.classList.add('shake');
-      title.innerText = '媽祖顯靈中...';
-      poem.innerText = '';
+      title.innerText = '聖母顯靈中...';
+      poem.style.display = 'none';
       desc.innerText = '';
 
       setTimeout(() => {
         icon.classList.remove('shake');
         const result = mazuFortunes[Math.floor(Math.random() * mazuFortunes.length)];
         
-        icon.innerText = '📜';
         title.innerText = `【${result.level}】${result.title}`;
-        title.style.color = '#ffb703';
+        title.style.color = '#e5c158';
+        poem.style.display = 'block';
         poem.innerText = result.poem;
         desc.innerHTML = result.desc;
       }, 1000);
